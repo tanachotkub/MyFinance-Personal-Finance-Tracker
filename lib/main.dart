@@ -4,7 +4,7 @@ import 'core/theme/app_theme.dart';
 import 'providers/theme_provider.dart';
 import 'providers/category_provider.dart';
 import 'providers/transaction_provider.dart';
-import 'ui/screens/dashboard/dashboard_screen.dart'; // ← เพิ่ม
+import 'ui/screens/main_screen.dart';
 
 void main() {
   runApp(const MyFinanceApp());
@@ -64,7 +64,7 @@ class _InitScreenState extends State<InitScreen> {
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => const DashboardScreen()),
+      MaterialPageRoute(builder: (_) => const MainScreen()), // ← เปลี่ยน
     );
   }
 
