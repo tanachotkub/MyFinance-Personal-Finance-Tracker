@@ -23,7 +23,7 @@ class TransactionRepository {
     );
     return maps.map((m) => Transaction.fromMap(m)).toList();
   }
-
+ 
   Future<List<Transaction>> getByMonth(int year, int month) async {
     final db = await _dbHelper.database;
     final yearMonth = '$year-${month.toString().padLeft(2, '0')}';

@@ -6,7 +6,8 @@ import 'providers/category_provider.dart';
 import 'providers/transaction_provider.dart';
 import 'ui/screens/main_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // ← เพิ่ม
   runApp(const MyFinanceApp());
 }
 

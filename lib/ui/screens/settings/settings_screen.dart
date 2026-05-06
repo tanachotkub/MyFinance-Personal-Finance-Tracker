@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../data/repositories/export_repository.dart';
 import '../../../providers/theme_provider.dart';
+import '../../../providers/transaction_provider.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -11,12 +13,12 @@ class SettingsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ตั้งค่า',
-            style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('ตั้งค่า', style: TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: ListView(
         children: [
           const SizedBox(height: 8),
+
           _buildSection('ธีม', [
             SwitchListTile(
               secondary: const Icon(Icons.dark_mode_outlined),
@@ -26,6 +28,24 @@ class SettingsScreen extends StatelessWidget {
               onChanged: (_) => themeProvider.toggleTheme(),
             ),
           ]),
+
+          _buildSection('ข้อมูล', [
+            ListTile(
+              leading: const Icon(Icons.download_outlined),
+              title: const Text('Export เดือนนี้ (CSV)'),
+              subtitle: const Text('ส่งออกรายการเดือนปัจจุบัน'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => _export(context, currentMonthOnly: true),
+            ),
+            ListTile(
+              leading: const Icon(Icons.download_for_offline_outlined),
+              title: const Text('Export ทั้งหมด (CSV)'),
+              subtitle: const Text('ส่งออกรายการทุกเดือน'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => _export(context, currentMonthOnly: false),
+            ),
+          ]),
+
           _buildSection('เกี่ยวกับ', [
             const ListTile(
               leading: Icon(Icons.info_outline),
@@ -58,5 +78,35 @@ class SettingsScreen extends StatelessWidget {
         const Divider(),
       ],
     );
+  }
+
+  Future<void> _export(BuildContext context, {required bool currentMonthOnly}) async {
+    final txProvider = context.read<TransactionProvider>();
+
+    // แสดง loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      final repo = ExportRepository();
+      if (currentMonthOnly) {
+        await repo.exportToCsv(
+          year: txProvider.currentYear,
+          month: txProvider.currentMonth,
+        );
+      } else {
+        await repo.exportToCsv();
+      }
+    } catch (e) {
+      if (!context.mounted) { return; }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Export ไม่สำเร็จ: $e')),
+      );
+    } finally {
+      if (context.mounted) { Navigator.pop(context); }
+    }
   }
 }

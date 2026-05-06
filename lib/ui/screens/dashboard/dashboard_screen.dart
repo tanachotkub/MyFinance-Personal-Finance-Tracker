@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/transaction_provider.dart';
 import '../../../providers/theme_provider.dart';
-import '../../../core/theme/app_theme.dart';
 import '../../widgets/balance_card.dart';
 import '../../widgets/transaction_card.dart';
 import '../transactions/add_edit_transaction_screen.dart';
@@ -30,7 +29,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     'พ.ย.',
     'ธ.ค.'
   ];
-
   @override
   Widget build(BuildContext context) {
     final txProvider = context.watch<TransactionProvider>();
@@ -38,94 +36,79 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final summary = txProvider.summary;
     final transactions = txProvider.transactions;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: GestureDetector(
-          onTap: _pickMonth,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                '${_months[txProvider.currentMonth]} ${txProvider.currentYear}',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const Icon(Icons.arrow_drop_down),
-            ],
+    return CustomScrollView(
+      slivers: [
+        SliverAppBar(
+          title: GestureDetector(
+            onTap: _pickMonth,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '${_months[txProvider.currentMonth]} ${txProvider.currentYear}',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const Icon(Icons.arrow_drop_down),
+              ],
+            ),
+          ),
+          actions: [
+            IconButton(
+              icon: Icon(
+                  themeProvider.isDark ? Icons.light_mode : Icons.dark_mode),
+              onPressed: themeProvider.toggleTheme,
+            ),
+          ],
+          floating: true,
+          snap: true,
+          elevation: 0,
+        ),
+        SliverToBoxAdapter(
+          child: BalanceCard(
+            income: summary['income'] ?? 0,
+            expense: summary['expense'] ?? 0,
+            balance: summary['balance'] ?? 0,
           ),
         ),
-        actions: [
-          IconButton(
-            icon:
-                Icon(themeProvider.isDark ? Icons.light_mode : Icons.dark_mode),
-            onPressed: themeProvider.toggleTheme,
-          ),
-        ],
-      ),
-      body: RefreshIndicator(
-        onRefresh: () => txProvider.loadCurrentMonth(),
-        child: CustomScrollView(
-          slivers: [
-            // Balance Card
-            SliverToBoxAdapter(
-              child: BalanceCard(
-                income: summary['income'] ?? 0,
-                expense: summary['expense'] ?? 0,
-                balance: summary['balance'] ?? 0,
-              ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'รายการล่าสุด',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  '${transactions.length} รายการ',
+                  style: TextStyle(color: Colors.grey[500], fontSize: 13),
+                ),
+              ],
             ),
-
-            // หัวข้อรายการล่าสุด
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'รายการล่าสุด',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ),
+        transactions.isEmpty
+            ? SliverToBoxAdapter(child: _buildEmpty())
+            : SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) => TransactionCard(
+                    transaction: transactions[index],
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => AddEditTransactionScreen(
+                          transaction: transactions[index],
+                        ),
+                      ),
                     ),
-                    Text(
-                      '${transactions.length} รายการ',
-                      style: TextStyle(color: Colors.grey[500], fontSize: 13),
-                    ),
-                  ],
+                    onDelete: () => _confirmDelete(transactions[index].id),
+                  ),
+                  childCount: transactions.length,
                 ),
               ),
-            ),
-
-            // Transaction List
-            transactions.isEmpty
-                ? SliverToBoxAdapter(child: _buildEmpty())
-                : SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) => TransactionCard(
-                        transaction: transactions[index],
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => AddEditTransactionScreen(
-                              transaction: transactions[index],
-                            ),
-                          ),
-                        ),
-                        onDelete: () => _confirmDelete(transactions[index].id),
-                      ),
-                      childCount: transactions.length,
-                    ),
-                  ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 100)),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _goToAddTransaction,
-        backgroundColor: AppTheme.primaryColor,
-        icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text('เพิ่มรายการ', style: TextStyle(color: Colors.white)),
-      ),
+        const SliverToBoxAdapter(child: SizedBox(height: 100)),
+      ],
     );
   }
 
@@ -181,10 +164,4 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-  void _goToAddTransaction() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const AddEditTransactionScreen()),
-    );
-  }
 }

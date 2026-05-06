@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myfinance/ui/screens/transactions/add_edit_transaction_screen.dart';
 import 'package:provider/provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../../providers/transaction_provider.dart';
@@ -29,32 +30,49 @@ class _MainScreenState extends State<MainScreen> {
         index: _currentIndex,
         children: _screens,
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _currentIndex,
-        onDestinationSelected: (index) async {
-          setState(() => _currentIndex = index);
-          // โหลดข้อมูลใหม่ทุกครั้งที่สลับ tab
-          if (!mounted) { return; }
-          await context.read<TransactionProvider>().loadCurrentMonth();
-        },
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'หน้าแรก',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.bar_chart_outlined),
-            selectedIcon: Icon(Icons.bar_chart),
-            label: 'สรุป',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.settings_outlined),
-            selectedIcon: Icon(Icons.settings),
-            label: 'ตั้งค่า',
-          ),
-        ],
-        indicatorColor: AppTheme.primaryColor.withValues(alpha: 0.15),
+      floatingActionButton: _currentIndex == 0
+          ? FloatingActionButton.extended(
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const AddEditTransactionScreen(),
+                ),
+              ),
+              backgroundColor: AppTheme.primaryColor,
+              icon: const Icon(Icons.add, color: Colors.white),
+              label: const Text('เพิ่มรายการ',
+                  style: TextStyle(color: Colors.white)),
+            )
+          : null,
+      bottomNavigationBar: SafeArea(
+        child: NavigationBar(
+          selectedIndex: _currentIndex,
+          onDestinationSelected: (index) async {
+            setState(() => _currentIndex = index);
+            if (!mounted) {
+              return;
+            }
+            await context.read<TransactionProvider>().loadCurrentMonth();
+          },
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home),
+              label: 'หน้าแรก',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.bar_chart_outlined),
+              selectedIcon: Icon(Icons.bar_chart),
+              label: 'สรุป',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.settings_outlined),
+              selectedIcon: Icon(Icons.settings),
+              label: 'ตั้งค่า',
+            ),
+          ],
+          indicatorColor: AppTheme.primaryColor.withValues(alpha: 0.15),
+        ),
       ),
     );
   }
