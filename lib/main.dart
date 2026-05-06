@@ -4,6 +4,7 @@ import 'core/theme/app_theme.dart';
 import 'providers/theme_provider.dart';
 import 'providers/category_provider.dart';
 import 'providers/transaction_provider.dart';
+import 'ui/screens/dashboard/dashboard_screen.dart'; // ← เพิ่ม
 
 void main() {
   runApp(const MyFinanceApp());
@@ -36,7 +37,6 @@ class MyFinanceApp extends StatelessWidget {
   }
 }
 
-// โหลด data ก่อนเข้าแอป
 class InitScreen extends StatefulWidget {
   const InitScreen({super.key});
 
@@ -53,18 +53,19 @@ class _InitScreenState extends State<InitScreen> {
 
   Future<void> _init() async {
     final catProvider = context.read<CategoryProvider>();
-    final txProvider  = context.read<TransactionProvider>();
+    final txProvider = context.read<TransactionProvider>();
+
     await catProvider.loadCategories();
     await txProvider.loadCurrentMonth();
 
-    if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const Scaffold(
-          body: Center(child: Text('✅ DB พร้อมแล้ว! ไปต่อ Dashboard')),
-        )),
-      );
+    if (!mounted) {
+      return;
     }
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const DashboardScreen()),
+    );
   }
 
   @override
