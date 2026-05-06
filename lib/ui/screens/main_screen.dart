@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:myfinance/ui/screens/transactions/add_edit_transaction_screen.dart';
 import 'package:provider/provider.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/utils/page_transitions.dart';
 import '../../providers/transaction_provider.dart';
 import 'dashboard/dashboard_screen.dart';
 import 'summary/monthly_summary_screen.dart';
 import 'settings/settings_screen.dart';
+import 'transactions/add_edit_transaction_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -32,12 +33,19 @@ class _MainScreenState extends State<MainScreen> {
       ),
       floatingActionButton: _currentIndex == 0
           ? FloatingActionButton.extended(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const AddEditTransactionScreen(),
-                ),
-              ),
+              onPressed: () async {
+                final txProvider =
+                    context.read<TransactionProvider>(); // ← เก็บไว้ก่อน
+                await Navigator.push(
+                  context,
+                  SlideUpRoute(page: const AddEditTransactionScreen()),
+                );
+                if (!mounted) {
+                  return;
+                }
+                await txProvider
+                    .loadCurrentMonth(); // ← ใช้ตัวแปรแทน context.read
+              },
               backgroundColor: AppTheme.primaryColor,
               icon: const Icon(Icons.add, color: Colors.white),
               label: const Text('เพิ่มรายการ',

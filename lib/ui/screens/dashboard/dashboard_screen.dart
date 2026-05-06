@@ -5,6 +5,7 @@ import '../../../providers/theme_provider.dart';
 import '../../widgets/balance_card.dart';
 import '../../widgets/transaction_card.dart';
 import '../transactions/add_edit_transaction_screen.dart';
+import '../../../core/utils/page_transitions.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -94,14 +95,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 delegate: SliverChildBuilderDelegate(
                   (context, index) => TransactionCard(
                     transaction: transactions[index],
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => AddEditTransactionScreen(
-                          transaction: transactions[index],
+                    onTap: () async {
+                      final txProvider =
+                          context.read<TransactionProvider>(); // ← เก็บไว้ก่อน
+                      await Navigator.push(
+                        context,
+                        SlideUpRoute(
+                          page: AddEditTransactionScreen(
+                              transaction: transactions[index]),
                         ),
-                      ),
-                    ),
+                      );
+                      if (!mounted) {
+                        return;
+                      }
+                      await txProvider
+                          .loadCurrentMonth(); // ← ใช้ตัวแปรแทน context.read
+                    },
                     onDelete: () => _confirmDelete(transactions[index].id),
                   ),
                   childCount: transactions.length,
@@ -163,5 +172,4 @@ class _DashboardScreenState extends State<DashboardScreen> {
       await context.read<TransactionProvider>().deleteTransaction(id);
     }
   }
-
 }

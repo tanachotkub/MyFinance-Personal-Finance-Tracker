@@ -1,4 +1,4 @@
-import 'package:sqflite/sqflite.dart' as sqflite;  // ← เพิ่ม alias
+import 'package:sqflite/sqflite.dart' as sqflite; // ← เพิ่ม alias
 import '../database/database_helper.dart';
 import '../models/transaction.dart';
 
@@ -23,12 +23,12 @@ class TransactionRepository {
     );
     return maps.map((m) => Transaction.fromMap(m)).toList();
   }
- 
+
   Future<List<Transaction>> getByMonth(int year, int month) async {
     final db = await _dbHelper.database;
     final yearMonth = '$year-${month.toString().padLeft(2, '0')}';
     final maps = await db.rawQuery(
-      "$_selectWithCategory WHERE t.date LIKE '$yearMonth%' ORDER BY t.date DESC",
+      "$_selectWithCategory WHERE t.date LIKE '$yearMonth%' ORDER BY t.date DESC, datetime(t.created_at) DESC",
     );
     return maps.map((m) => Transaction.fromMap(m)).toList();
   }
@@ -53,10 +53,10 @@ class TransactionRepository {
     return {'income': income, 'expense': expense, 'balance': income - expense};
   }
 
-Future<String> insert(Transaction transaction) async {
+  Future<String> insert(Transaction transaction) async {
     final db = await _dbHelper.database;
     await db.insert('transactions', transaction.toMap(),
-        conflictAlgorithm: sqflite.ConflictAlgorithm.replace); 
+        conflictAlgorithm: sqflite.ConflictAlgorithm.replace);
     return transaction.id;
   }
 

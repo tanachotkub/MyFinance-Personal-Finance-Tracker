@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:myfinance/ui/screens/main_screen.dart';
 import 'package:provider/provider.dart';
 import 'core/theme/app_theme.dart';
 import 'providers/theme_provider.dart';
 import 'providers/category_provider.dart';
 import 'providers/transaction_provider.dart';
-import 'ui/screens/main_screen.dart';
+import 'ui/screens/splash_screen.dart';
+
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // ← เพิ่ม
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyFinanceApp());
 }
 
@@ -30,7 +32,7 @@ class MyFinanceApp extends StatelessWidget {
             theme: AppTheme.light,
             darkTheme: AppTheme.dark,
             themeMode: themeProvider.themeMode,
-            home: const InitScreen(),
+            home: const SplashScreen(),
           );
         },
       ),
