@@ -5,6 +5,7 @@ import '../../../providers/theme_provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../widgets/balance_card.dart';
 import '../../widgets/transaction_card.dart';
+import '../transactions/add_edit_transaction_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -15,8 +16,19 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   final List<String> _months = [
-    '', 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
-    'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'
+    '',
+    'ม.ค.',
+    'ก.พ.',
+    'มี.ค.',
+    'เม.ย.',
+    'พ.ค.',
+    'มิ.ย.',
+    'ก.ค.',
+    'ส.ค.',
+    'ก.ย.',
+    'ต.ค.',
+    'พ.ย.',
+    'ธ.ค.'
   ];
 
   @override
@@ -43,7 +55,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
         actions: [
           IconButton(
-            icon: Icon(themeProvider.isDark ? Icons.light_mode : Icons.dark_mode),
+            icon:
+                Icon(themeProvider.isDark ? Icons.light_mode : Icons.dark_mode),
             onPressed: themeProvider.toggleTheme,
           ),
         ],
@@ -70,7 +83,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   children: [
                     const Text(
                       'รายการล่าสุด',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Text(
                       '${transactions.length} รายการ',
@@ -88,6 +102,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     delegate: SliverChildBuilderDelegate(
                       (context, index) => TransactionCard(
                         transaction: transactions[index],
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => AddEditTransactionScreen(
+                              transaction: transactions[index],
+                            ),
+                          ),
+                        ),
                         onDelete: () => _confirmDelete(transactions[index].id),
                       ),
                       childCount: transactions.length,
@@ -115,7 +137,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Text('💸', style: TextStyle(fontSize: 48)),
           SizedBox(height: 12),
           Text('ยังไม่มีรายการเดือนนี้', style: TextStyle(color: Colors.grey)),
-          Text('กด + เพื่อเพิ่มรายการแรก', style: TextStyle(color: Colors.grey, fontSize: 12)),
+          Text('กด + เพื่อเพิ่มรายการแรก',
+              style: TextStyle(color: Colors.grey, fontSize: 12)),
         ],
       ),
     );
@@ -143,7 +166,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         title: const Text('ลบรายการ'),
         content: const Text('ต้องการลบรายการนี้ใช่ไหม?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('ยกเลิก')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('ยกเลิก')),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: const Text('ลบ', style: TextStyle(color: Colors.red)),
@@ -157,9 +182,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void _goToAddTransaction() {
-    // จะทำใน Feature ถัดไป
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Feature เพิ่มรายการ — coming next!')),
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const AddEditTransactionScreen()),
     );
   }
 }
