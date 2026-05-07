@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../../../data/repositories/export_repository.dart';
 import '../../../providers/theme_provider.dart';
 import '../../../providers/transaction_provider.dart';
+import '../../../core/utils/page_transitions.dart'; // ← เพิ่ม
+import 'category_screen.dart'; // ← เพิ่ม
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -13,12 +15,12 @@ class SettingsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ตั้งค่า', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('ตั้งค่า',
+            style: TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: ListView(
         children: [
           const SizedBox(height: 8),
-
           _buildSection('ธีม', [
             SwitchListTile(
               secondary: const Icon(Icons.dark_mode_outlined),
@@ -28,7 +30,6 @@ class SettingsScreen extends StatelessWidget {
               onChanged: (_) => themeProvider.toggleTheme(),
             ),
           ]),
-
           _buildSection('ข้อมูล', [
             ListTile(
               leading: const Icon(Icons.download_outlined),
@@ -45,7 +46,18 @@ class SettingsScreen extends StatelessWidget {
               onTap: () => _export(context, currentMonthOnly: false),
             ),
           ]),
-
+          _buildSection('หมวดหมู่', [
+            ListTile(
+              leading: const Icon(Icons.category_outlined),
+              title: const Text('จัดการหมวดหมู่'),
+              subtitle: const Text('เพิ่ม/ลบหมวดรายรับ-รายจ่าย'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => Navigator.push(
+                context,
+                SlideUpRoute(page: const CategoryScreen()),
+              ),
+            ),
+          ]),
           _buildSection('เกี่ยวกับ', [
             const ListTile(
               leading: Icon(Icons.info_outline),
@@ -80,7 +92,8 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _export(BuildContext context, {required bool currentMonthOnly}) async {
+  Future<void> _export(BuildContext context,
+      {required bool currentMonthOnly}) async {
     final txProvider = context.read<TransactionProvider>();
 
     // แสดง loading
@@ -101,12 +114,16 @@ class SettingsScreen extends StatelessWidget {
         await repo.exportToCsv();
       }
     } catch (e) {
-      if (!context.mounted) { return; }
+      if (!context.mounted) {
+        return;
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Export ไม่สำเร็จ: $e')),
       );
     } finally {
-      if (context.mounted) { Navigator.pop(context); }
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
     }
   }
 }
