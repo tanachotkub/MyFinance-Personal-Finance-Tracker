@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — MyFinance</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            purple: {
+              450: '#7C6FFF',
+              500: '#6C63FF',
+              600: '#5A52E8',
+              700: '#4840CC',
+            }
+          },
+          fontFamily: {
+            sans: ['Sarabun', 'sans-serif'],
+            display: ['Prompt', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Sarabun', sans-serif; }
+    .gradient-bg {
+      background: linear-gradient(135deg, #7C6FFF 0%, #6057E8 50%, #4840CC 100%);
+    }
+    .card-glass {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+    }
+    .section-card {
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid #ede9ff;
+    }
+    .badge {
+      background: #ede9ff;
+      color: #5a3fc0;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+    .dot-list li::before {
+      content: '•';
+      color: #7C6FFF;
+      font-weight: bold;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased">
+
+  <!-- Hero Header -->
+  <header class="gradient-bg text-white py-16 px-6 relative overflow-hidden">
+    <!-- decorative circles -->
+    <div class="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-white opacity-5"></div>
+    <div class="absolute -bottom-16 -left-16 w-56 h-56 rounded-full bg-white opacity-5"></div>
+
+    <div class="max-w-3xl mx-auto relative z-10">
+      <!-- Logo area -->
+      <div class="flex items-center gap-4 mb-8">
+        <div class="w-16 h-16 rounded-2xl card-glass flex items-center justify-center text-3xl shadow-lg">
+          💰
+        </div>
+        <div>
+          <h1 class="font-display text-3xl font-800 leading-tight">MyFinance</h1>
+          <p class="text-white/70 text-sm mt-0.5">จัดการการเงินส่วนตัว</p>
+        </div>
+      </div>
+
+      <h2 class="font-display text-4xl font-700 leading-snug mb-3">
+        นโยบายความเป็นส่วนตัว
+      </h2>
+      <p class="text-white/80 text-lg font-300 leading-relaxed">
+        Privacy Policy
+      </p>
+
+      <!-- Meta badges -->
+      <div class="flex flex-wrap gap-3 mt-6">
+        <span class="card-glass text-white/90 text-sm px-4 py-1.5 rounded-full">
+          📅 มีผลตั้งแต่ 1 พฤษภาคม 2568
+        </span>
+        <span class="card-glass text-white/90 text-sm px-4 py-1.5 rounded-full">
+          📱 Android
+        </span>
+        <span class="card-glass text-white/90 text-sm px-4 py-1.5 rounded-full">
+          🔒 Offline-First
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-3xl mx-auto px-6 py-12 space-y-8">
+
+    <!-- Highlight box: No data collected -->
+    <div class="rounded-2xl p-6 flex gap-4 items-start" style="background: #f0fdf4; border: 1px solid #bbf7d0;">
+      <span class="text-3xl mt-0.5">🛡️</span>
+      <div>
+        <p class="font-semibold text-green-800 text-lg">ข้อมูลของคุณอยู่ในเครื่องของคุณเท่านั้น</p>
+        <p class="text-green-700 mt-1 leading-relaxed">
+          MyFinance ทำงานแบบ <strong>Offline-First</strong> อย่างสมบูรณ์ — ไม่มีการส่งข้อมูลส่วนตัวออกไปยังเซิร์ฟเวอร์ภายนอก ไม่มี Cloud Sync ไม่มีการติดตาม
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 1 -->
+    <div class="section-card p-7 space-y-4">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-purple-50 flex items-center justify-center">
+          <span class="text-lg">📋</span>
+        </div>
+        <h3 class="font-display text-xl font-700 text-gray-900">1. ข้อมูลที่แอปเก็บ</h3>
+      </div>
+      <p class="text-gray-600 leading-relaxed">
+        แอป MyFinance เก็บข้อมูลต่อไปนี้ <strong>เฉพาะในอุปกรณ์ของคุณ</strong> ผ่าน SQLite Database:
+      </p>
+      <ul class="dot-list space-y-2 text-gray-700 pl-2">
+        <li>รายการรายรับและรายจ่าย (จำนวนเงิน, หมวดหมู่, วันที่, หมายเหตุ)</li>
+        <li>หมวดหมู่รายรับ-รายจ่ายที่ผู้ใช้สร้างเอง</li>
+        <li>การตั้งค่าแอป เช่น ธีม, สกุลเงิน (เก็บผ่าน SharedPreferences)</li>
+      </ul>
+      <div class="rounded-xl p-4 mt-2" style="background:#fafafa; border:1px solid #f0eeff;">
+        <p class="text-sm text-gray-500">
+          ⚠️ <strong>ไม่มีการเก็บ</strong> ชื่อ-นามสกุล, อีเมล, หมายเลขโทรศัพท์, ข้อมูลธนาคาร, หรือข้อมูลส่วนบุคคลใด ๆ
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="section-card p-7 space-y-4">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-purple-50 flex items-center justify-center">
+          <span class="text-lg">🌐</span>
+        </div>
+        <h3 class="font-display text-xl font-700 text-gray-900">2. การเชื่อมต่ออินเทอร์เน็ต</h3>
+      </div>
+      <p class="text-gray-600 leading-relaxed">
+        แอป MyFinance <strong>ไม่ต้องการการเชื่อมต่ออินเทอร์เน็ต</strong> ในการใช้งาน และ <strong>ไม่มีการส่งข้อมูล</strong> ออกไปยังเซิร์ฟเวอร์ภายนอกใด ๆ ทั้งสิ้น
+      </p>
+      <ul class="dot-list space-y-2 text-gray-700 pl-2">
+        <li>ไม่มี API calls ไปยังเซิร์ฟเวอร์ภายนอก</li>
+        <li>ไม่มี Analytics หรือ Tracking ใด ๆ</li>
+        <li>ไม่มี Advertising SDK</li>
+        <li>ไม่มี Cloud Backup หรือ Sync</li>
+      </ul>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="section-card p-7 space-y-4">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-purple-50 flex items-center justify-center">
+          <span class="text-lg">🔑</span>
+        </div>
+        <h3 class="font-display text-xl font-700 text-gray-900">3. สิทธิ์การเข้าถึงอุปกรณ์</h3>
+      </div>
+      <p class="text-gray-600 leading-relaxed">แอปอาจขอสิทธิ์ต่อไปนี้:</p>
+      <div class="space-y-3">
+        <div class="flex gap-3 items-start p-3 rounded-xl" style="background:#fafafa; border:1px solid #f0eeff;">
+          <span class="text-lg mt-0.5">📁</span>
+          <div>
+            <p class="font-semibold text-gray-800 text-sm">Storage / ที่เก็บข้อมูล</p>
+            <p class="text-gray-500 text-sm mt-0.5">สำหรับ Export ไฟล์ CSV เพื่อสำรองข้อมูลของคุณเท่านั้น</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4 -->
+    <div class="section-card p-7 space-y-4">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-purple-50 flex items-center justify-center">
+          <span class="text-lg">👤</span>
+        </div>
+        <h3 class="font-display text-xl font-700 text-gray-900">4. สิทธิ์ของผู้ใช้</h3>
+      </div>
+      <p class="text-gray-600 leading-relaxed">เนื่องจากข้อมูลทั้งหมดอยู่ในอุปกรณ์ของคุณ คุณมีสิทธิ์เต็มที่ในการ:</p>
+      <ul class="dot-list space-y-2 text-gray-700 pl-2">
+        <li><strong>ดู</strong> ข้อมูลทั้งหมดได้จากในแอปโดยตรง</li>
+        <li><strong>Export</strong> ข้อมูลเป็นไฟล์ CSV ได้ตลอดเวลา</li>
+        <li><strong>ลบ</strong> ข้อมูลทั้งหมดได้โดยการถอนการติดตั้งแอป</li>
+      </ul>
+    </div>
+
+    <!-- Section 5 -->
+    <div class="section-card p-7 space-y-4">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-purple-50 flex items-center justify-center">
+          <span class="text-lg">👶</span>
+        </div>
+        <h3 class="font-display text-xl font-700 text-gray-900">5. ผู้ใช้ที่เป็นเด็ก</h3>
+      </div>
+      <p class="text-gray-600 leading-relaxed">
+        แอป MyFinance ไม่ได้มุ่งเป้าหมายไปยังเด็กอายุต่ำกว่า 13 ปี และไม่มีการเก็บข้อมูลส่วนบุคคลใด ๆ จากผู้ใช้ทุกกลุ่มอายุ
+      </p>
+    </div>
+
+    <!-- Section 6 -->
+    <div class="section-card p-7 space-y-4">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-purple-50 flex items-center justify-center">
+          <span class="text-lg">🔄</span>
+        </div>
+        <h3 class="font-display text-xl font-700 text-gray-900">6. การเปลี่ยนแปลงนโยบาย</h3>
+      </div>
+      <p class="text-gray-600 leading-relaxed">
+        หากมีการเปลี่ยนแปลงนโยบายความเป็นส่วนตัวนี้ จะมีการอัปเดตวันที่ที่ด้านบนของหน้านี้ และแจ้งผ่านการอัปเดตแอปใน Google Play Store
+      </p>
+    </div>
+
+    <!-- Section 7: Contact -->
+    <div class="rounded-2xl p-7 space-y-4" style="background: linear-gradient(135deg, #ede9ff 0%, #f5f3ff 100%); border: 1px solid #c4b5fd;">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-white flex items-center justify-center">
+          <span class="text-lg">✉️</span>
+        </div>
+        <h3 class="font-display text-xl font-700 text-gray-900">7. ติดต่อผู้พัฒนา</h3>
+      </div>
+      <p class="text-gray-600 leading-relaxed">
+        หากมีคำถามหรือข้อสงสัยเกี่ยวกับนโยบายนี้ สามารถติดต่อได้ผ่าน GitHub:
+      </p>
+      <a href="https://github.com/tanachotkub/MyFinance-Personal-Finance-Tracker/issues"
+         target="_blank"
+         class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white font-semibold text-sm transition-opacity hover:opacity-90"
+         style="background: #7C6FFF;">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        เปิด Issue บน GitHub
+      </a>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-gray-200 mt-4 py-8 px-6">
+    <div class="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-xl flex items-center justify-center text-lg" style="background: linear-gradient(135deg,#7C6FFF,#6057E8);">
+          💰
+        </div>
+        <span class="font-display font-700 text-gray-800">MyFinance</span>
+      </div>
+      <p class="text-gray-400 text-sm text-center">
+        © 2568 MyFinance · นโยบายมีผลตั้งแต่ 1 พฤษภาคม 2568
+      </p>
+      <a href="https://github.com/tanachotkub/MyFinance-Personal-Finance-Tracker"
+         target="_blank"
+         class="text-sm text-purple-500 hover:underline flex items-center gap-1">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        GitHub
+      </a>
+    </div>
+  </footer>
+
+</body>
+</html>
