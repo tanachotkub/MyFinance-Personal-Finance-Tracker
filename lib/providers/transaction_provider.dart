@@ -74,4 +74,67 @@ class TransactionProvider extends ChangeNotifier {
     _last6Months = await _repo.getLast6MonthsSummary();
     notifyListeners();
   }
+
+  // Filter state
+  String _searchQuery = '';
+  int? _filterCategoryId;
+  String _filterType = 'all'; // 'all' | 'income' | 'expense'
+
+  String get searchQuery => _searchQuery;
+  int? get filterCategoryId => _filterCategoryId;
+  String get filterType => _filterType;
+
+// Filtered list
+  List<Transaction> get filteredTransactions {
+    return _transactions.where((t) {
+      // กรองตาม type
+      if (_filterType != 'all' && t.type != _filterType) {
+        return false;
+      }
+
+      // กรองตาม category
+      if (_filterCategoryId != null && t.categoryId != _filterCategoryId) {
+        return false;
+      }
+
+      // กรองตาม search query
+      if (_searchQuery.isNotEmpty) {
+        final q = _searchQuery.toLowerCase();
+        final matchName = t.categoryName?.toLowerCase().contains(q) ?? false;
+        final matchNote = t.note?.toLowerCase().contains(q) ?? false;
+        if (!matchName && !matchNote) {
+          return false;
+        }
+      }
+
+      return true;
+    }).toList();
+  }
+
+  void setSearchQuery(String query) {
+    _searchQuery = query;
+    notifyListeners();
+  }
+
+  void setFilterType(String type) {
+    _filterType = type;
+    notifyListeners();
+  }
+
+  void setFilterCategory(int? categoryId) {
+    _filterCategoryId = categoryId;
+    notifyListeners();
+  }
+
+  void clearFilters() {
+    _searchQuery = '';
+    _filterCategoryId = null;
+    _filterType = 'all';
+    notifyListeners();
+  }
+
+  bool get hasActiveFilter =>
+      _searchQuery.isNotEmpty ||
+      _filterCategoryId != null ||
+      _filterType != 'all';
 }
