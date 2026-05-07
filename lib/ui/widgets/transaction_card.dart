@@ -20,12 +20,12 @@ class TransactionCard extends StatelessWidget {
     final fmt = NumberFormat('#,##0.00', 'en_US');
     final isIncome = transaction.type == 'income';
     final amountColor = isIncome ? AppTheme.incomeColor : AppTheme.expenseColor;
-    final amountText = '${isIncome ? '+' : '-'}฿${fmt.format(transaction.amount)}';
 
     Color categoryColor = AppTheme.primaryColor;
     try {
       if (transaction.categoryColor != null) {
-        categoryColor = Color(int.parse('FF${transaction.categoryColor}', radix: 16));
+        categoryColor =
+            Color(int.parse('FF${transaction.categoryColor}', radix: 16));
       }
     } catch (_) {}
 
@@ -38,13 +38,13 @@ class TransactionCard extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.all(14),
             child: Row(
               children: [
                 // Icon หมวด
                 Container(
-                  width: 48,
-                  height: 48,
+                  width: 50,
+                  height: 50,
                   decoration: BoxDecoration(
                     color: categoryColor.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(14),
@@ -52,13 +52,13 @@ class TransactionCard extends StatelessWidget {
                   child: Center(
                     child: Text(
                       transaction.categoryIcon ?? '💰',
-                      style: const TextStyle(fontSize: 22),
+                      style: const TextStyle(fontSize: 24),
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 14),
 
-                // ชื่อหมวด + โน้ต/วันที่
+                // ชื่อหมวด + วันที่/โน้ต
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,43 +70,72 @@ class TransactionCard extends StatelessWidget {
                           fontSize: 15,
                         ),
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        transaction.note?.isNotEmpty == true
-                            ? transaction.note!
-                            : transaction.date,
-                        style: TextStyle(
-                          color: Colors.grey[500],
-                          fontSize: 12,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      const SizedBox(height: 3),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.calendar_today_outlined,
+                            size: 11,
+                            color: Colors.grey[400],
+                          ),
+                          const SizedBox(width: 3),
+                          Text(
+                            transaction.date,
+                            style: TextStyle(
+                              color: Colors.grey[400],
+                              fontSize: 11,
+                            ),
+                          ),
+                          if (transaction.note?.isNotEmpty == true) ...[
+                            Text(' · ',
+                                style: TextStyle(color: Colors.grey[400])),
+                            Expanded(
+                              child: Text(
+                                transaction.note!,
+                                style: TextStyle(
+                                  color: Colors.grey[400],
+                                  fontSize: 11,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                     ],
                   ),
                 ),
 
-                // จำนวนเงิน + ปุ่มลบ
+                // จำนวนเงิน + ลบ
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(
-                      amountText,
-                      style: TextStyle(
-                        color: amountColor,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15,
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: amountColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        '${isIncome ? '+' : '-'}฿${fmt.format(transaction.amount)}',
+                        style: TextStyle(
+                          color: amountColor,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
                     if (onDelete != null)
                       GestureDetector(
                         onTap: onDelete,
                         child: Padding(
-                          padding: const EdgeInsets.only(top: 4),
+                          padding: const EdgeInsets.only(top: 6),
                           child: Icon(
                             Icons.delete_outline,
-                            color: Colors.grey[400],
-                            size: 18,
+                            color: Colors.grey[300],
+                            size: 16,
                           ),
                         ),
                       ),

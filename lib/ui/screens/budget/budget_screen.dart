@@ -64,60 +64,99 @@ class _BudgetScreenState extends State<BudgetScreen> {
                 final isOver = budget.isOverBudget;
                 final progressColor = isOver ? AppTheme.expenseColor : catColor;
 
-                return Card(
+                return Container(
                   margin: const EdgeInsets.only(bottom: 12),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardTheme.color,
+                    borderRadius: BorderRadius.circular(20),
+                    border: isOver
+                        ? Border.all(
+                            color: AppTheme.expenseColor.withValues(alpha: 0.4),
+                            width: 1.5)
+                        : null,
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // หัว
                         Row(
                           children: [
-                            Text(budget.categoryIcon ?? '💰',
-                                style: const TextStyle(fontSize: 24)),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                budget.categoryName ?? 'ไม่ระบุ',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w600, fontSize: 15),
+                            Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: catColor.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Center(
+                                child: Text(budget.categoryIcon ?? '💰',
+                                    style: const TextStyle(fontSize: 22)),
                               ),
                             ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    budget.categoryName ?? 'ไม่ระบุ',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 15),
+                                  ),
+                                  Text(
+                                    'งบ ฿${fmt.format(budget.amount)}',
+                                    style: TextStyle(
+                                        color: Colors.grey[500], fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            if (isOver)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.expenseColor
+                                      .withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: const Text('⚠️ เกินงบ',
+                                    style: TextStyle(
+                                        fontSize: 11,
+                                        color: AppTheme.expenseColor)),
+                              ),
                             IconButton(
                               icon: Icon(Icons.edit_outlined,
-                                  color: Colors.grey[400], size: 20),
+                                  color: Colors.grey[400], size: 18),
                               onPressed: () => _showEditBudgetDialog(
                                   budget.categoryId, budget.amount),
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(),
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: 4),
                             IconButton(
                               icon: Icon(Icons.delete_outline,
-                                  color: Colors.grey[400], size: 20),
+                                  color: Colors.grey[400], size: 18),
                               onPressed: () => _deleteBudget(budget.categoryId),
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 12),
-
-                        // Progress Bar
+                        const SizedBox(height: 16),
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: BorderRadius.circular(8),
                           child: LinearProgressIndicator(
                             value: budget.percentage,
                             backgroundColor:
                                 progressColor.withValues(alpha: 0.12),
                             valueColor: AlwaysStoppedAnimation(progressColor),
-                            minHeight: 10,
+                            minHeight: 8,
                           ),
                         ),
-                        const SizedBox(height: 8),
-
-                        // ตัวเลข
+                        const SizedBox(height: 10),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -131,7 +170,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                             ),
                             Text(
                               isOver
-                                  ? '⚠️ เกินงบ ฿${fmt.format(budget.spent - budget.amount)}'
+                                  ? 'เกิน ฿${fmt.format(budget.spent - budget.amount)}'
                                   : 'เหลือ ฿${fmt.format(budget.remaining)}',
                               style: TextStyle(
                                 color: isOver
@@ -144,7 +183,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'งบทั้งหมด ฿${fmt.format(budget.amount)} • ${(budget.percentage * 100).toStringAsFixed(0)}%',
+                          '${(budget.percentage * 100).toStringAsFixed(0)}% ของงบทั้งหมด',
                           style:
                               TextStyle(color: Colors.grey[400], fontSize: 11),
                         ),

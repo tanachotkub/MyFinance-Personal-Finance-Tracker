@@ -81,27 +81,70 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            // Toggle รายรับ/รายจ่าย
             _buildTypeToggle(),
             const SizedBox(height: 20),
 
-            // จำนวนเงิน
-            _buildAmountField(),
+            // Amount Card
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF6C63FF), Color(0xFF9C88FF)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('จำนวนเงิน',
+                      style: TextStyle(color: Colors.white70, fontSize: 13)),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _amountController,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    style: const TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                    decoration: const InputDecoration(
+                      prefixText: '฿ ',
+                      prefixStyle: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                      border: InputBorder.none,
+                      hintText: '0.00',
+                      hintStyle: TextStyle(color: Colors.white38),
+                    ),
+                    validator: (v) {
+                      if (v == null || v.isEmpty) {
+                        return 'กรุณากรอกจำนวนเงิน';
+                      }
+                      if (double.tryParse(v) == null) {
+                        return 'กรุณากรอกตัวเลขเท่านั้น';
+                      }
+                      if (double.parse(v) <= 0) {
+                        return 'จำนวนเงินต้องมากกว่า 0';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(height: 16),
 
-            // หมวดหมู่
             _buildCategoryPicker(filteredCategories),
             const SizedBox(height: 16),
-
-            // วันที่
             _buildDatePicker(),
             const SizedBox(height: 16),
-
-            // โน้ต
             _buildNoteField(),
             const SizedBox(height: 32),
-
-            // ปุ่มบันทึก
             _buildSaveButton(),
           ],
         ),
@@ -142,32 +185,39 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
     );
   }
 
-  Widget _buildAmountField() {
-    return TextFormField(
-      controller: _amountController,
-      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-      decoration: InputDecoration(
-        labelText: 'จำนวนเงิน',
-        prefixText: '฿ ',
-        prefixStyle: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        filled: true,
-      ),
-      validator: (v) {
-        if (v == null || v.isEmpty) { return 'กรุณากรอกจำนวนเงิน'; }
-        if (double.tryParse(v) == null) { return 'กรุณากรอกตัวเลขเท่านั้น'; }
-        if (double.parse(v) <= 0) { return 'จำนวนเงินต้องมากกว่า 0'; }
-        return null;
-      },
-    );
-  }
+  // Widget _buildAmountField() {
+  //   return TextFormField(
+  //     controller: _amountController,
+  //     keyboardType: const TextInputType.numberWithOptions(decimal: true),
+  //     style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+  //     decoration: InputDecoration(
+  //       labelText: 'จำนวนเงิน',
+  //       prefixText: '฿ ',
+  //       prefixStyle: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+  //       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+  //       filled: true,
+  //     ),
+  //     validator: (v) {
+  //       if (v == null || v.isEmpty) {
+  //         return 'กรุณากรอกจำนวนเงิน';
+  //       }
+  //       if (double.tryParse(v) == null) {
+  //         return 'กรุณากรอกตัวเลขเท่านั้น';
+  //       }
+  //       if (double.parse(v) <= 0) {
+  //         return 'จำนวนเงินต้องมากกว่า 0';
+  //       }
+  //       return null;
+  //     },
+  //   );
+  // }
 
   Widget _buildCategoryPicker(List<Category> categories) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('หมวดหมู่', style: TextStyle(fontSize: 14, color: Colors.grey)),
+        const Text('หมวดหมู่',
+            style: TextStyle(fontSize: 14, color: Colors.grey)),
         const SizedBox(height: 8),
         Wrap(
           spacing: 8,
@@ -183,7 +233,8 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
               onTap: () => setState(() => _selectedCategory = cat),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? catColor.withValues(alpha: 0.15)
@@ -203,9 +254,8 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                       cat.name,
                       style: TextStyle(
                         color: isSelected ? catColor : null,
-                        fontWeight: isSelected
-                            ? FontWeight.bold
-                            : FontWeight.normal,
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.normal,
                       ),
                     ),
                   ],
@@ -261,7 +311,8 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
   }
 
   Widget _buildSaveButton() {
-    final color = _type == 'income' ? AppTheme.incomeColor : AppTheme.expenseColor;
+    final color =
+        _type == 'income' ? AppTheme.incomeColor : AppTheme.expenseColor;
     return ElevatedButton(
       onPressed: _save,
       style: ElevatedButton.styleFrom(
@@ -290,8 +341,12 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
   }
 
   Future<void> _save() async {
-    if (!_formKey.currentState!.validate()) { return; }
-    if (_selectedCategory == null) { return; }
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    if (_selectedCategory == null) {
+      return;
+    }
 
     final txProvider = context.read<TransactionProvider>();
     final dateStr =
@@ -316,7 +371,9 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
       );
     }
 
-    if (!mounted) { return; }
+    if (!mounted) {
+      return;
+    }
     Navigator.pop(context);
   }
 
@@ -343,7 +400,9 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
       await context.read<TransactionProvider>().deleteTransaction(
             widget.transaction!.id,
           );
-      if (!mounted) { return; }
+      if (!mounted) {
+        return;
+      }
       Navigator.pop(context);
     }
   }
@@ -381,7 +440,8 @@ class _TypeButton extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: selected ? Colors.white : Colors.grey, size: 18),
+              Icon(icon,
+                  color: selected ? Colors.white : Colors.grey, size: 18),
               const SizedBox(width: 6),
               Text(
                 label,
