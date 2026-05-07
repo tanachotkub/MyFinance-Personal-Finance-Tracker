@@ -7,6 +7,7 @@ import 'dashboard/dashboard_screen.dart';
 import 'summary/monthly_summary_screen.dart';
 import 'settings/settings_screen.dart';
 import 'transactions/add_edit_transaction_screen.dart';
+import 'budget/budget_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -21,6 +22,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = const [
     DashboardScreen(),
     MonthlySummaryScreen(),
+    BudgetScreen(),
     SettingsScreen(),
   ];
 
@@ -35,7 +37,7 @@ class _MainScreenState extends State<MainScreen> {
           ? FloatingActionButton.extended(
               onPressed: () async {
                 final txProvider =
-                    context.read<TransactionProvider>(); // ← เก็บไว้ก่อน
+                    context.read<TransactionProvider>(); 
                 await Navigator.push(
                   context,
                   SlideUpRoute(page: const AddEditTransactionScreen()),
@@ -44,7 +46,7 @@ class _MainScreenState extends State<MainScreen> {
                   return;
                 }
                 await txProvider
-                    .loadCurrentMonth(); // ← ใช้ตัวแปรแทน context.read
+                    .loadCurrentMonth(); 
               },
               backgroundColor: AppTheme.primaryColor,
               icon: const Icon(Icons.add, color: Colors.white),
@@ -72,6 +74,11 @@ class _MainScreenState extends State<MainScreen> {
               icon: Icon(Icons.bar_chart_outlined),
               selectedIcon: Icon(Icons.bar_chart),
               label: 'สรุป',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.wallet_outlined), 
+              selectedIcon: Icon(Icons.wallet),
+              label: 'งบ',
             ),
             NavigationDestination(
               icon: Icon(Icons.settings_outlined),

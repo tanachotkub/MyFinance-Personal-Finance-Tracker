@@ -6,6 +6,7 @@ import 'providers/theme_provider.dart';
 import 'providers/category_provider.dart';
 import 'providers/transaction_provider.dart';
 import 'ui/screens/splash_screen.dart';
+import 'providers/budget_provider.dart';
 
 
 void main() async {
@@ -23,6 +24,7 @@ class MyFinanceApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => CategoryProvider()),
         ChangeNotifierProvider(create: (_) => TransactionProvider()),
+        ChangeNotifierProvider(create: (_) => BudgetProvider()), // ← เพิ่ม
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {
