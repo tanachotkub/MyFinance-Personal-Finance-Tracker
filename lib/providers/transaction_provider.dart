@@ -45,19 +45,33 @@ class TransactionProvider extends ChangeNotifier {
       categoryId: categoryId,
       note: note,
       date: date,
-      createdAt: DateTime.now().toIso8601String(),
+      createdAt: DateTime.now().toUtc().toIso8601String(),
     );
     await _repo.insert(transaction);
-    await loadByMonth(_currentYear, _currentMonth);
+
+    // ← โหลดเดือนตาม date ที่บันทึก ไม่ใช่เดือนปัจจุบันเสมอ
+    final parsedDate = DateTime.parse(date);
+    await loadByMonth(parsedDate.year, parsedDate.month);
   }
 
   Future<void> updateTransaction(Transaction transaction) async {
     await _repo.update(transaction);
-    await loadByMonth(_currentYear, _currentMonth);
+
+    // ← โหลดเดือนตาม date ที่แก้ไข
+    final parsedDate = DateTime.parse(transaction.date);
+    await loadByMonth(parsedDate.year, parsedDate.month);
   }
 
   Future<void> deleteTransaction(String id) async {
     await _repo.delete(id);
     await loadByMonth(_currentYear, _currentMonth);
+  }
+
+  List<Map<String, dynamic>> _last6Months = [];
+  List<Map<String, dynamic>> get last6Months => _last6Months;
+
+  Future<void> loadLast6Months() async {
+    _last6Months = await _repo.getLast6MonthsSummary();
+    notifyListeners();
   }
 }

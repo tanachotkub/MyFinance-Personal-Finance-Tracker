@@ -36,8 +36,7 @@ class _MainScreenState extends State<MainScreen> {
       floatingActionButton: _currentIndex == 0
           ? FloatingActionButton.extended(
               onPressed: () async {
-                final txProvider =
-                    context.read<TransactionProvider>(); 
+                final txProvider = context.read<TransactionProvider>();
                 await Navigator.push(
                   context,
                   SlideUpRoute(page: const AddEditTransactionScreen()),
@@ -45,8 +44,7 @@ class _MainScreenState extends State<MainScreen> {
                 if (!mounted) {
                   return;
                 }
-                await txProvider
-                    .loadCurrentMonth(); 
+                await txProvider.loadCurrentMonth();
               },
               backgroundColor: AppTheme.primaryColor,
               icon: const Icon(Icons.add, color: Colors.white),
@@ -62,7 +60,9 @@ class _MainScreenState extends State<MainScreen> {
             if (!mounted) {
               return;
             }
-            await context.read<TransactionProvider>().loadCurrentMonth();
+            final txProvider = context.read<TransactionProvider>();
+            await txProvider.loadCurrentMonth();
+            await txProvider.loadLast6Months();
           },
           destinations: const [
             NavigationDestination(
@@ -76,7 +76,7 @@ class _MainScreenState extends State<MainScreen> {
               label: 'สรุป',
             ),
             NavigationDestination(
-              icon: Icon(Icons.wallet_outlined), 
+              icon: Icon(Icons.wallet_outlined),
               selectedIcon: Icon(Icons.wallet),
               label: 'งบ',
             ),

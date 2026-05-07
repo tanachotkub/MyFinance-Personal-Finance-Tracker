@@ -74,4 +74,42 @@ class TransactionRepository {
     final db = await _dbHelper.database;
     return await db.delete('transactions', where: 'id = ?', whereArgs: [id]);
   }
+
+  Future<List<Map<String, dynamic>>> getLast6MonthsSummary() async {
+    final db = await _dbHelper.database;
+    final now = DateTime.now();
+    final List<Map<String, dynamic>> result = [];
+
+    for (int i = 5; i >= 0; i--) {
+      final date = DateTime(now.year, now.month - i, 1);
+      final yearMonth = '${date.year}-${date.month.toString().padLeft(2, '0')}';
+
+      final rows = await db.rawQuery('''
+      SELECT type, COALESCE(SUM(amount), 0) as total
+      FROM transactions
+      WHERE date LIKE '$yearMonth%'
+      GROUP BY type
+    ''');
+
+      double income = 0;
+      double expense = 0;
+      for (final row in rows) {
+        if (row['type'] == 'income') {
+          income = (row['total'] as num).toDouble();
+        }
+        if (row['type'] == 'expense') {
+          expense = (row['total'] as num).toDouble();
+        }
+      }
+
+      result.add({
+        'year': date.year,
+        'month': date.month,
+        'income': income,
+        'expense': expense,
+      });
+    }
+
+    return result;
+  }
 }

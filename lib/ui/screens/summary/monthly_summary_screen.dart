@@ -15,8 +15,19 @@ class MonthlySummaryScreen extends StatefulWidget {
 
 class _MonthlySummaryScreenState extends State<MonthlySummaryScreen> {
   final List<String> _months = [
-    '', 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
-    'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'
+    '',
+    'ม.ค.',
+    'ก.พ.',
+    'มี.ค.',
+    'เม.ย.',
+    'พ.ค.',
+    'มิ.ย.',
+    'ก.ค.',
+    'ส.ค.',
+    'ก.ย.',
+    'ต.ค.',
+    'พ.ย.',
+    'ธ.ค.'
   ];
 
   @override
@@ -24,8 +35,7 @@ class _MonthlySummaryScreenState extends State<MonthlySummaryScreen> {
     final txProvider = context.watch<TransactionProvider>();
     final summary = txProvider.summary;
     final transactions = txProvider.transactions;
-
-    // จัดกลุ่มตามหมวด
+    final last6 = txProvider.last6Months;
     final categoryTotals = _groupByCategory(transactions);
 
     return Scaffold(
@@ -35,38 +45,52 @@ class _MonthlySummaryScreenState extends State<MonthlySummaryScreen> {
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      body: transactions.isEmpty
-          ? const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('📊', style: TextStyle(fontSize: 48)),
-                  SizedBox(height: 12),
-                  Text('ไม่มีข้อมูลเดือนนี้', style: TextStyle(color: Colors.grey)),
-                ],
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          // สรุปรายรับรายจ่าย
+          _buildSummaryRow(summary),
+          const SizedBox(height: 24),
+
+          // Bar Chart ย้อนหลัง 6 เดือน
+          _buildSectionTitle('รายรับ-รายจ่าย ย้อนหลัง 6 เดือน'),
+          const SizedBox(height: 12),
+          _buildBarChart(last6),
+          const SizedBox(height: 8),
+          _buildBarChartLegend(),
+          const SizedBox(height: 24),
+
+          // Pie Chart
+          if (categoryTotals.isNotEmpty) ...[
+            _buildSectionTitle('สัดส่วนรายจ่ายตามหมวด'),
+            const SizedBox(height: 12),
+            _buildPieChart(categoryTotals),
+            const SizedBox(height: 24),
+          ],
+
+          // Category List
+          if (categoryTotals.isNotEmpty) ...[
+            _buildSectionTitle('รายละเอียดตามหมวด'),
+            const SizedBox(height: 12),
+            _buildCategoryList(categoryTotals),
+          ],
+
+          if (transactions.isEmpty)
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 40),
+                child: Column(
+                  children: [
+                    Text('📊', style: TextStyle(fontSize: 48)),
+                    SizedBox(height: 12),
+                    Text('ไม่มีข้อมูลเดือนนี้',
+                        style: TextStyle(color: Colors.grey)),
+                  ],
+                ),
               ),
-            )
-          : ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                // การ์ดสรุปรายรับรายจ่าย
-                _buildSummaryRow(summary),
-                const SizedBox(height: 20),
-
-                // Pie Chart
-                if (categoryTotals.isNotEmpty) ...[
-                  _buildSectionTitle('สัดส่วนรายจ่ายตามหมวด'),
-                  const SizedBox(height: 12),
-                  _buildPieChart(categoryTotals),
-                  const SizedBox(height: 20),
-                ],
-
-                // Legend
-                _buildSectionTitle('รายละเอียดตามหมวด'),
-                const SizedBox(height: 12),
-                _buildCategoryList(categoryTotals),
-              ],
             ),
+        ],
+      ),
     );
   }
 
@@ -102,12 +126,140 @@ class _MonthlySummaryScreenState extends State<MonthlySummaryScreen> {
     );
   }
 
+  Widget _buildBarChart(List<Map<String, dynamic>> data) {
+    if (data.isEmpty) {
+      return const SizedBox(
+        height: 200,
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    // หา max value เพื่อ scale กราฟ
+    double maxVal = 1000;
+    for (final d in data) {
+      final inc = (d['income'] as num).toDouble();
+      final exp = (d['expense'] as num).toDouble();
+      if (inc > maxVal) {
+        maxVal = inc;
+      }
+      if (exp > maxVal) {
+        maxVal = exp;
+      }
+    }
+
+    return SizedBox(
+      height: 220,
+      child: BarChart(
+        BarChartData(
+          maxY: maxVal * 1.2,
+          barTouchData: BarTouchData(
+            touchTooltipData: BarTouchTooltipData(
+              getTooltipColor: (_) =>
+                  Theme.of(context).cardTheme.color ?? Colors.white,
+              getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                final fmt = NumberFormat('#,##0', 'en_US');
+                final label = rodIndex == 0 ? 'รายรับ' : 'รายจ่าย';
+                return BarTooltipItem(
+                  '$label\n฿${fmt.format(rod.toY)}',
+                  TextStyle(
+                    color: rodIndex == 0
+                        ? AppTheme.incomeColor
+                        : AppTheme.expenseColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                );
+              },
+            ),
+          ),
+          titlesData: FlTitlesData(
+            leftTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            rightTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            topTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                getTitlesWidget: (value, meta) {
+                  final index = value.toInt();
+                  if (index < 0 || index >= data.length) {
+                    return const SizedBox();
+                  }
+                  final month = data[index]['month'] as int;
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Text(
+                      _months[month],
+                      style: const TextStyle(fontSize: 11),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          gridData: FlGridData(
+            show: true,
+            drawVerticalLine: false,
+            getDrawingHorizontalLine: (value) => FlLine(
+              color: Colors.grey.withValues(alpha: 0.15),
+              strokeWidth: 1,
+            ),
+          ),
+          borderData: FlBorderData(show: false),
+          barGroups: data.asMap().entries.map((e) {
+            final index = e.key;
+            final d = e.value;
+            final income = (d['income'] as num).toDouble();
+            final expense = (d['expense'] as num).toDouble();
+
+            return BarChartGroupData(
+              x: index,
+              barRods: [
+                BarChartRodData(
+                  toY: income,
+                  color: AppTheme.incomeColor,
+                  width: 10,
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(4)),
+                ),
+                BarChartRodData(
+                  toY: expense,
+                  color: AppTheme.expenseColor,
+                  width: 10,
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(4)),
+                ),
+              ],
+              barsSpace: 4,
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBarChartLegend() {
+    return const Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _LegendDot(color: AppTheme.incomeColor, label: 'รายรับ'),
+        SizedBox(width: 20),
+        _LegendDot(color: AppTheme.expenseColor, label: 'รายจ่าย'),
+      ],
+    );
+  }
+
   Widget _buildPieChart(List<_CategoryTotal> data) {
     return SizedBox(
       height: 220,
       child: PieChart(
         PieChartData(
-         sections: data.map((item) {
+          sections: data.map((item) {
             return PieChartSectionData(
               value: item.total,
               title: item.icon,
@@ -148,9 +300,11 @@ class _MonthlySummaryScreenState extends State<MonthlySummaryScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(item.name,
-                            style: const TextStyle(fontWeight: FontWeight.w600)),
+                            style:
+                                const TextStyle(fontWeight: FontWeight.w600)),
                         Text('฿${fmt.format(item.total)}',
-                            style: const TextStyle(fontWeight: FontWeight.bold)),
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
                       ],
                     ),
                     const SizedBox(height: 4),
@@ -179,11 +333,11 @@ class _MonthlySummaryScreenState extends State<MonthlySummaryScreen> {
 
   List<_CategoryTotal> _groupByCategory(List<Transaction> transactions) {
     final Map<int, _CategoryTotal> map = {};
-
     for (final t in transactions) {
-      if (t.type != 'expense') { continue; }
+      if (t.type != 'expense') {
+        continue;
+      }
       final id = t.categoryId;
-
       Color color = AppTheme.expenseColor;
       try {
         if (t.categoryColor != null) {
@@ -209,13 +363,13 @@ class _MonthlySummaryScreenState extends State<MonthlySummaryScreen> {
         );
       }
     }
-
     final list = map.values.toList();
     list.sort((a, b) => b.total.compareTo(a.total));
     return list;
   }
 }
 
+// Helper classes
 class _CategoryTotal {
   final int id;
   final String name;
@@ -272,6 +426,28 @@ class _SummaryCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _LegendDot extends StatelessWidget {
+  final Color color;
+  final String label;
+
+  const _LegendDot({required this.color, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 6),
+        Text(label, style: const TextStyle(fontSize: 12)),
+      ],
     );
   }
 }
