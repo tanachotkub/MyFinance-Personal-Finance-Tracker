@@ -34,16 +34,16 @@ class Budget {
   }
 
   factory Budget.fromMap(Map<String, dynamic> map) {
-    return Budget(
-      id: map['id'],
-      categoryId: map['category_id'],
-      amount: map['amount'],
-      categoryName: map['category_name'],
-      categoryIcon: map['category_icon'],
-      categoryColor: map['category_color'],
-      spent: map['spent'] ?? 0,
-    );
-  }
+  return Budget(
+    id: map['id'],
+    categoryId: map['category_id'],
+    amount: (map['amount'] as num).toDouble(),   // ← เพิ่ม toDouble()
+    categoryName: map['category_name'],
+    categoryIcon: map['category_icon'],
+    categoryColor: map['category_color'],
+    spent: (map['spent'] as num?)?.toDouble() ?? 0.0, // ← เพิ่ม toDouble()
+  );
+}
 
   Budget copyWith({double? amount, double? spent}) {
     return Budget(

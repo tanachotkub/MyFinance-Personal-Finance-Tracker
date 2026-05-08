@@ -8,6 +8,7 @@ import 'summary/monthly_summary_screen.dart';
 import 'settings/settings_screen.dart';
 import 'transactions/add_edit_transaction_screen.dart';
 import 'budget/budget_screen.dart';
+import '../../providers/budget_provider.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -61,8 +62,14 @@ class _MainScreenState extends State<MainScreen> {
               return;
             }
             final txProvider = context.read<TransactionProvider>();
+            final budgetProvider = context.read<BudgetProvider>(); // ← เพิ่ม
             await txProvider.loadCurrentMonth();
             await txProvider.loadLast6Months();
+            await budgetProvider.loadBudgets(
+              // ← เพิ่ม
+              txProvider.currentYear,
+              txProvider.currentMonth,
+            );
           },
           destinations: const [
             NavigationDestination(

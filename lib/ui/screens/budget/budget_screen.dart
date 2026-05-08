@@ -6,6 +6,7 @@ import '../../../data/models/category.dart';
 import '../../../providers/budget_provider.dart';
 import '../../../providers/category_provider.dart';
 import '../../../providers/transaction_provider.dart';
+import 'budget_dialog.dart';
 
 class BudgetScreen extends StatefulWidget {
   const BudgetScreen({super.key});
@@ -247,96 +248,23 @@ class _BudgetScreenState extends State<BudgetScreen> {
         categories: cat, initialAmount: currentAmount, isEdit: true);
   }
 
-  Future<void> _showBudgetDialog({
-    required List<Category> categories,
-    double? initialAmount,
-    bool isEdit = false,
-  }) async {
-    Category? selected = categories.isNotEmpty ? categories.first : null;
-    final amountController = TextEditingController(
-      text: initialAmount != null ? initialAmount.toStringAsFixed(0) : '',
-    );
-
-    await showDialog(
-      context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setDialogState) => AlertDialog(
-          title: Text(isEdit ? 'แก้ไขงบประมาณ' : 'ตั้งงบประมาณ'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (!isEdit)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: DropdownButton<Category>(
-                    value: selected,
-                    isExpanded: true,
-                    underline: const SizedBox(),
-                    items: categories
-                        .map((c) => DropdownMenuItem(
-                              value: c,
-                              child: Row(
-                                children: [
-                                  Text(c.icon),
-                                  const SizedBox(width: 8),
-                                  Text(c.name),
-                                ],
-                              ),
-                            ))
-                        .toList(),
-                    onChanged: (v) => setDialogState(() => selected = v),
-                  ),
-                ),
-              if (!isEdit) const SizedBox(height: 12),
-              TextField(
-                controller: amountController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: 'งบประมาณ (฿)',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  prefixText: '฿ ',
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('ยกเลิก'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final amount = double.tryParse(amountController.text);
-                if (amount == null || amount <= 0 || selected == null) {
-                  return;
-                }
-                final budgetProvider = context.read<BudgetProvider>();
-                final txProvider = context.read<TransactionProvider>();
-                await budgetProvider.setBudget(selected!.id!, amount);
-                await budgetProvider.loadBudgets(
-                    txProvider.currentYear, txProvider.currentMonth);
-                if (!context.mounted) {
-                  return;
-                }
-                Navigator.pop(ctx);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryColor,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('บันทึก'),
-            ),
-          ],
-        ),
-      ),
-    );
-    amountController.dispose();
-  }
+Future<void> _showBudgetDialog({
+  required List<Category> categories,
+  double? initialAmount,
+  bool isEdit = false,
+}) async {
+  if (!mounted) { return; }
+  await showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (_) => BudgetBottomSheet(
+      categories: categories,
+      initialAmount: initialAmount,
+      isEdit: isEdit,
+    ),
+  );
+}
 
   Future<void> _deleteBudget(int categoryId) async {
     final confirm = await showDialog<bool>(

@@ -10,21 +10,21 @@ class BudgetRepository {
     final yearMonth = '$year-${month.toString().padLeft(2, '0')}';
 
     final maps = await db.rawQuery('''
-      SELECT 
-        b.*,
-        c.name  AS category_name,
-        c.icon  AS category_icon,
-        c.color AS category_color,
-        COALESCE(SUM(t.amount), 0) AS spent
-      FROM budgets b
-      LEFT JOIN categories c ON b.category_id = c.id
-      LEFT JOIN transactions t 
-        ON t.category_id = b.category_id 
-        AND t.type = 'expense'
-        AND t.date LIKE '$yearMonth%'
-      GROUP BY b.id
-      ORDER BY b.category_id
-    ''');
+  SELECT 
+    b.*,
+    c.name  AS category_name,
+    c.icon  AS category_icon,
+    c.color AS category_color,
+    CAST(COALESCE(SUM(t.amount), 0) AS REAL) AS spent  -- ← เพิ่ม CAST
+  FROM budgets b
+  LEFT JOIN categories c ON b.category_id = c.id
+  LEFT JOIN transactions t 
+    ON t.category_id = b.category_id 
+    AND t.type = 'expense'
+    AND t.date LIKE '$yearMonth%'
+  GROUP BY b.id
+  ORDER BY b.category_id
+''');
 
     return maps.map((m) => Budget.fromMap(m)).toList();
   }
@@ -40,7 +40,7 @@ class BudgetRepository {
 
   Future<void> deleteBudget(int categoryId) async {
     final db = await _dbHelper.database;
-    await db.delete('budgets',
-        where: 'category_id = ?', whereArgs: [categoryId]);
+    await db
+        .delete('budgets', where: 'category_id = ?', whereArgs: [categoryId]);
   }
 }
