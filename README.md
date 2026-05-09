@@ -205,7 +205,7 @@ CREATE TABLE transactions (
 ```bash
 # Clone โปรเจค
 git clone https://github.com/tanachotkub/MyFinance-Personal-Finance-Tracker.git
-cd myfinance
+cd MyFinance-Personal-Finance-Tracker
 
 # ติดตั้ง dependencies
 flutter pub get
