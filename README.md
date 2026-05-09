@@ -204,7 +204,7 @@ CREATE TABLE transactions (
 
 ```bash
 # Clone โปรเจค
-git clone https://github.com/yourusername/myfinance.git
+git clone https://github.com/tanachotkub/MyFinance-Personal-Finance-Tracker.git
 cd myfinance
 
 # ติดตั้ง dependencies
