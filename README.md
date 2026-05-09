@@ -155,11 +155,11 @@ myfinance/
 ```sql
 -- หมวดหมู่
 CREATE TABLE categories (
-  id        INTEGER PRIMARY KEY AUTOINCREMENT,
-  name      TEXT    NOT NULL,
-  type      TEXT    NOT NULL,  -- 'income' | 'expense'
-  icon      TEXT    NOT NULL,  -- emoji icon
-  color     TEXT    NOT NULL,  -- hex color string
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  name       TEXT    NOT NULL,
+  type       TEXT    NOT NULL,   -- 'income' | 'expense'
+  icon       TEXT    NOT NULL,   -- emoji icon
+  color      TEXT    NOT NULL,   -- hex color string
   is_default INTEGER DEFAULT 0
 );
 
@@ -216,9 +216,25 @@ flutter run
 # Build APK (Android)
 flutter build apk --release
 
-# Build IPA (iOS)
-flutter build ipa
+# Build App Bundle สำหรับ Play Store
+flutter build appbundle --release
 ```
+
+### ⚠️ Setup สำหรับ Release Build
+
+ไฟล์ `key.properties` และ `upload-keystore.jks` ไม่ได้อยู่ใน repo เพื่อความปลอดภัย ต้องตั้งค่าเองก่อน build release:
+
+1. วางไฟล์ `upload-keystore.jks` ไว้ที่ `android/`
+2. สร้างไฟล์ `android/key.properties` แล้วใส่ข้อมูลดังนี้:
+
+```properties
+storeFile=../upload-keystore.jks
+storePassword=your_password
+keyAlias=upload
+keyPassword=your_password
+```
+
+> ขอไฟล์ keystore จาก owner โดยตรง หรือสร้างใหม่สำหรับ development ของตัวเอง
 
 ---
 
@@ -228,8 +244,8 @@ flutter build ipa
 // lib/core/constants/app_config.dart
 
 class AppConfig {
-  static const String dbName       = 'myfinance.db';
-  static const int    dbVersion    = 1;
+  static const String dbName         = 'myfinance.db';
+  static const int    dbVersion      = 1;
   static const String currencySymbol = '฿';
   static const String defaultLocale  = 'th_TH';
 }
@@ -283,10 +299,10 @@ notifyListeners()          ← UI rebuilds automatically
 - [x] **v0.2.0** — CRUD transactions + Category management
 - [x] **v0.3.0** — Dashboard + ยอดรวมรายเดือน
 - [x] **v0.4.0** — กราฟ Pie/Bar ด้วย fl_chart
-- [ ] **v0.5.0** — ค้นหา & กรอง transactions
-- [ ] **v0.6.0** — สรุปรายเดือน + เทียบเดือนที่แล้ว
-- [ ] **v0.7.0** — Dark Mode + Settings screen
-- [ ] **v0.8.0** — Export CSV + Share
+- [x] **v0.5.0** — ค้นหา & กรอง transactions
+- [x] **v0.6.0** — สรุปรายเดือน + เทียบเดือนที่แล้ว
+- [x] **v0.7.0** — Dark Mode + Settings screen
+- [x] **v0.8.0** — Export CSV + Share
 - [ ] **v1.0.0** — ตั้ง budget limit แต่ละหมวด + แจ้งเตือน
 - [ ] **v1.1.0** — Widget หน้า Home Screen (Android)
 - [ ] **v1.2.0** — Backup/Restore ข้อมูลผ่าน Google Drive
@@ -307,6 +323,8 @@ notifyListeners()          ← UI rebuilds automatically
 | CSV Export | สร้าง CSV file + share ออกจากแอป |
 | Flutter Navigation | Navigator 2.0, Named routes |
 | State Management | Provider pattern ทั้งแอป |
+| Android Release Build | Keystore, signing config, build.gradle.kts |
+| Play Store | App bundle, target SDK, Ad ID declaration |
 
 ---
 
